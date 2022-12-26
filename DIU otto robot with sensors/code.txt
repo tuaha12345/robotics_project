@@ -1,0 +1,337 @@
+#include<Servo.h>
+String data;
+int const trigPin = 11;
+int const echoPin = 12;
+int flame_sensor = 13;
+int k=10;
+int pin1=2;
+int pin2=3;
+int pin3=4;
+int pin4=5;
+int pin5=6;
+int pin6=7;
+int led1=8;
+int led2=9;
+int b=10;
+int flame_detected;
+
+Servo s1;
+Servo s2;
+Servo s3;
+Servo s4;
+Servo s5;
+Servo s6;
+
+void setup() {
+ s1.attach(pin1);
+  s2.attach(pin2);
+s3.attach(pin3);
+ s4.attach(pin4);
+ s5.attach(pin5);
+  s6.attach(pin6);
+  pinMode(led1, OUTPUT);
+   pinMode(led2, OUTPUT);
+   pinMode(b, OUTPUT);
+
+ 
+ Serial.begin(9600);
+ 
+}
+
+
+void loop() {
+  digitalWrite(led1, HIGH); 
+  digitalWrite(led2, HIGH); 
+  flame_detected = digitalRead(flame_sensor);
+  if (flame_detected == 1)
+  {
+   
+    digitalWrite(b, HIGH);
+  }
+  else
+  {
+
+    digitalWrite(b, LOW);
+  }
+  delay(1000);
+int duration, distance;
+digitalWrite(trigPin, HIGH);
+delay(1);
+digitalWrite(trigPin, LOW);
+duration = pulseIn(echoPin, HIGH);
+distance = (duration/2) / 29.1;
+
+char ch=0;
+    data="";
+    while(1)
+    { 
+      while(Serial.available()<=0);
+      ch = Serial.read();
+      if(ch=='#')
+      break;
+      data+=ch;
+    }
+
+if (distance <= 20 && distance >= 0) {
+    if (data == "move forward") // forward walking (all motors rotate in forward direction)
+    {
+      for(int c=100,d=90;c<=125,d<=110;c++,d++)////////////////////////////////////
+ {
+  s3.write(c);
+  s4.write(d);
+  delay(17);
+ }
+ for(int a=90,b=90;a<=110,b<=110;a++,b++)
+ {
+  s1.write(a);
+  s2.write(b);
+  delay(17);
+ }
+ for(int c=125,d=110;c>=100,d>=90;c--,d--)
+ {
+  s3.write(c);
+  s4.write(d);
+  delay(17);
+ }
+
+for(int a=110,b=110;a>=90,b>=90;a--,b--)
+{
+  s1.write(a);
+  s2.write(b);
+  delay(17);
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+for(int c=100,d=90;c>=90,d>=70;c--,d--)
+{
+  s3.write(c);
+  s4.write(d);
+  delay(17);
+}
+for(int a=90,b=90;a>=70,b>=70;a--,b--)
+{
+  s1.write(a);
+  s2.write(b);
+  delay(17);
+}
+for(int c=90,d=70;c<=100,d<=90;c++,d++)
+{
+  s3.write(c);
+  s4.write(d);
+  delay(17);
+}
+for(int a=70,b=70;a<=90,b<=90;a++,b++)
+{
+  s1.write(a);
+  s2.write(b);
+  delay(17);
+}
+
+
+   
+    
+    }
+    
+  else if (data== "move backword") // backward walking(all motors rotate in reverse direction)
+    {
+      for(int d=90,c=100;c<=120,d<=105;c++,d++)
+{
+  s4.write(d);
+s3.write(c);
+delay(17);
+}
+for(int a=90,b=90;a>=75,b>=75;a--,b--)
+{
+  s1.write(a);
+s2.write(b);
+delay(17);
+}
+for(int d=105,c=120;d>=90,c>=100;c--,d--)
+{
+   s4.write(d);
+s3.write(c);
+delay(17);
+}
+for(int a=75,b=75;a<=90,b<=90;a++,b++)
+{
+   s1.write(a);
+s2.write(b);
+delay(17);
+}
+//////////////////////////////////
+
+for(int c=100,d=90;c>=85,d>=70;c--,d--)
+{
+   s4.write(d);
+s3.write(c);
+delay(17);
+}
+
+for(int a=90,b=90;a<=105,b<=105;a++,b++)
+{
+  s1.write(a);
+s2.write(b);
+delay(17);
+}
+for(int c=85,d=70;c<=100,d<=90;c++,d++)
+{
+     s4.write(d);
+s3.write(c);
+delay(17);
+}
+for(int a=105,b=105;a>=90,b>=90;a--,b--)
+{
+  s1.write(a);
+s2.write(b);
+delay(17);
+}
+    }
+  else if (data== "turn left") // turning left
+    {
+      for(int c=100,d=90;c<=120,d<=110;c++,d++)
+{
+  s3.write(c);
+  s4.write(d);
+  delay(15);
+  
+}
+for(int a=90,b=90;a<=100,b<=110;a++,b++)
+{
+  s1.write(a);
+  s2.write(b);
+  delay(15);
+}
+for(int c=120,d=110;c>=100,d>=90;c--,d--)
+{
+  s3.write(c);
+  s4.write(d);
+  delay(15);
+  
+}
+for(int a=100,b=110;a>=90,b>=90;a--,b--)
+{
+   s1.write(a);
+  s2.write(b);
+  delay(15);
+}
+
+
+
+
+
+    }
+  else if (data== "turn right") // turning right
+    {
+      for(int c=100,d=90;c>=85,d>=70;c--,d--){
+  s3.write(c);
+  s4.write(d);
+  delay(15);
+}
+for(int a=90,b=90;a>=75,b>=75;a--,b--)
+{
+  s1.write(a);
+  //s2.write(b);
+  delay(15);
+}
+for(int c=85,d=70;c<=100,d<=90;c++,d++)
+{
+   s3.write(c);
+  s4.write(d);
+  delay(15);
+}
+for(int a=75,b=75;a<=90,b<=90;a++,b++)
+{
+  s1.write(a);
+  //s2.write(b);
+  delay(15);
+}
+    }
+
+  else if (data== "hands up") // hands up
+    {
+      s3.write(100);
+ for(int a=90,b=90;a<=170,b>=20;a++,b--)
+{
+  s5.write(a);
+  s6.write(b);
+  delay(40);
+}
+for(int a=170,b=20;a>=90,b<=90;a--,b++)
+{
+  s5.write(a);
+  s6.write(b);
+  delay(40);
+}
+    }
+  else if (data== "hands down") // hands down
+    {
+      s1.write(90);
+    s2.write(90);
+    s3.write(100);
+    s4.write(90);
+    s5.write(90);
+    s6.write(90);
+    digitalWrite(b,LOW);
+    }
+  else if (data== "right hand up") // right hand up
+    {
+      s3.write(100);
+for(int a=90;a<=180;a++)
+{
+  s5.write(a);
+  delay(15);
+}
+    }
+  else if (data== "left hand up") // left hand up
+    {
+          s3.write(100);
+for(int a=90;a>=20;a--)
+{
+  s6.write(a);
+  delay(15);
+}
+    }
+  else if (data== "dancing") // dancing
+    {
+      s1.write(90);
+s2.write(90);
+for(int a=90,c=110,d=90;a>=30,c>=90,d>=65;c--,d--,a--)
+{
+  s3.write(c);
+s4.write(d);
+s6.write(a);
+delay(20);
+}
+for(int a=30,c=90,d=65;a<=90,c<=110,d<=90;a++,c++,d++)
+{
+   s3.write(c);
+s4.write(d);
+s6.write(a);
+delay(20);
+}
+    }
+  else if (data== "stop") // stop
+    {
+      s1.write(90);
+    s2.write(90);
+    s3.write(100);
+    s4.write(90);
+    s5.write(90);
+    s6.write(90);
+    digitalWrite(b,LOW);
+    }
+
+} else {
+s1.write(90);
+    s2.write(90);
+    s3.write(100);
+    s4.write(90);
+    s5.write(90);
+    s6.write(90);
+    digitalWrite(b,LOW);
+}
+delay(60);
+
+
+
+
+}

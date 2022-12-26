@@ -1,0 +1,580 @@
+#include<Servo.h>
+#define trigPin 12
+#define echoPin 11
+int k=4;
+int pin1=2;
+int pin2=3;
+int pin3=4;
+int pin4=5;
+int pin5=6;
+int pin6=7;
+int pin7=8;
+int pin8=9;
+int pin9=10;
+int pin10=11;
+int pin11=12;
+int pin12=13;
+Servo s1;
+Servo s2;
+Servo s3;
+Servo s4;
+Servo s5;
+Servo s6;
+Servo s7;
+Servo s8;
+Servo s9;
+Servo s10;
+Servo s11;
+Servo s12;
+Servo s13;
+void setup() {
+ s1.attach(pin1);
+  s2.attach(pin2);
+s3.attach(pin3);
+ s4.attach(pin4);
+ s5.attach(pin5);
+  s6.attach(pin6);
+s7.attach(pin7);
+s8.attach(pin8);
+ s9.attach(pin9);
+  s10.attach(pin10);
+s11.attach(pin11);
+ s12.attach(pin12);
+ 
+}
+//-----------------start-1-------------------------
+void S1in(int n,int m)
+{
+  for(int i=n;i<=m;i++)
+  {
+    s1.write(i);
+    delay(k);
+  }
+  
+}
+void S1de(int n,int m)
+{
+  for(int i=n;i>=m;i--)
+  {
+    s1.write(i);
+    delay(k);
+  }
+  
+}
+//-----------------1--------------------------
+//---------------start--2--------------------------
+void S2in(int n,int m)
+{
+  for(int i=n;i<=m;i++)
+  {
+    s2.write(i);
+    delay(k);
+  }
+  
+}
+void S2de(int n,int m)
+{
+  for(int i=n;i>=m;i--)
+  {
+    s2.write(i);
+    delay(k);
+  }
+  
+}
+//-----------------2--------------------------
+//-------------start--3----------------------------
+void S3in(int n,int m)
+{
+  for(int i=n;i<=m;i++)
+  {
+    s3.write(i);
+    delay(k);
+  }
+  
+}
+void S3de(int n,int m)
+{
+  for(int i=n;i>=m;i--)
+  {
+    s3.write(i);
+    delay(k);
+  }
+  
+}
+//----------------3---------------------------
+//------------start---4----------------------------
+void S4in(int n,int m)
+{
+  for(int i=n;i<=m;i++)
+  {
+    s4.write(i);
+    delay(k);
+  }
+  
+}
+void S4de(int n,int m)
+{
+  for(int i=n;i>=m;i--)
+  {
+    s4.write(i);
+    delay(k);
+  }
+  
+}
+//----------------4---------------------------
+//------------start---5----------------------------
+void S5in(int n,int m)
+{
+  for(int i=n;i<=m;i++)
+  {
+    s5.write(i);
+    delay(k);
+  }
+  
+}
+void S5de(int n,int m)
+{
+  for(int i=n;i>=m;i--)
+  {
+    s5.write(i);
+    delay(k);
+  }
+  
+}
+//------------------5-------------------------
+//--------------start---6--------------------------
+void S6in(int n,int m)
+{
+  for(int i=n;i<=m;i++)
+  {
+    s6.write(i);
+    delay(k);
+  }
+  
+}
+void S6de(int n,int m)
+{
+  for(int i=n;i>=m;i--)
+  {
+    s6.write(i);
+    delay(k);
+  }
+  
+}
+//-------------------6------------------------
+//----------------start--7-------------------------
+void S7in(int n,int m)
+{
+  for(int i=n;i<=m;i++)
+  {
+    s7.write(i);
+    delay(k);
+  }
+  
+}
+void S7de(int n,int m)
+{
+  for(int i=n;i>=m;i--)
+  {
+    s7.write(i);
+    delay(k);
+  }
+  
+}
+//---------------------7----------------------
+//-----------------start---8-----------------------
+void S8in(int n,int m)
+{
+  for(int i=n;i<=m;i++)
+  {
+    s8.write(i);
+    delay(k);
+  }
+  
+}
+void S8de(int n,int m)
+{
+  for(int i=n;i>=m;i--)
+  {
+    s8.write(i);
+    delay(k);
+  }
+  
+}
+//--------------------8-----------------------
+
+/////////////************************************************************************************************************ LOOP***************************/////////////////////
+void loop() {
+long duration, distance;
+
+digitalWrite(trigPin, LOW);
+
+delayMicroseconds(2);
+
+digitalWrite(trigPin, HIGH);
+
+delayMicroseconds(10);
+
+digitalWrite(trigPin, LOW);
+
+duration = pulseIn(echoPin, HIGH);
+
+distance = (duration/2) / 29.1;
+
+if (distance < 13)
+
+{ 
+//--------leg down and hand extend ----------
+
+s1.write(145);
+s2.write(165);
+s3.write(30);
+s4.write(30);
+s5.write(180);
+s6.write(120);
+s7.write(0);
+s8.write(40);
+
+}
+
+else {
+
+//-------head down ----------
+s1.write(60);
+s2.write(60);
+s3.write(105);
+s4.write(130);
+s5.write(180);
+s6.write(120);
+s7.write(0);
+s8.write(40);
+
+}
+////-------------------------------------------Backword walking -----------------------------------
+s1.write(80);
+s3.write(88);
+s7.write(95);
+s8.write(85);
+
+S5de(90,70);
+S6in(90,120);
+S5in(70,90);
+S6de(120,90);
+
+S7in(95,115);
+S8de(85,60);
+S7de(115,95);
+S8in(60,85);
+//------------------------------------------ finished ---------------------------------------------------------
+//-----------------------------------------right side walking -------------------------------------------
+s1.write(88);
+s3.write(88);
+s7.write(95);
+s8.write(85);
+
+
+
+for(int c=88,e=90;c>=65,e>=65;c--,e--)
+{
+  s3.write(c);
+  s5.write(e);
+  delay(k);
+}
+for(int d=90,f=90;d<=120,f<=120;d++,f++)
+{
+  s4.write(d);
+  s6.write(f);
+  delay(k);
+}
+for(int c=65,e=65;c<=88,e<=90;c++,e++)
+{
+  s3.write(c);
+  s5.write(e);
+  delay(k);
+}
+for(int d=120,f=120;d>=90,f>=90;d--,f--)
+{
+  s4.write(d);
+  s6.write(f);
+  delay(k);
+}
+//------------------------------------------ finished ---------------------------------------------------------
+//-----------------------------------------left side walking -------------------------------------------
+s1.write(88);
+s3.write(88);
+s7.write(95);
+s8.write(85);
+
+for(int c=88,d=90;c>=75,d>=75;c--,d--)
+{
+  s3.write(c);
+  s4.write(d);
+  delay(k);
+}
+for(int a=80,g=95;a<=110,g<=120;a++,g++)
+{
+  s1.write(a);
+  s7.write(g);
+  delay(k);
+  
+}
+for(int b=90,h=85;b>=70,h>=65;b--,h--)
+{
+  s2.write(b);
+  s8.write(h);
+  delay(k);
+}
+for(int a=110,g=120;a>=80,g>=95;a--,g--)
+{
+  s1.write(a);
+  s7.write(g);
+  delay(k);
+}
+for(int b=70,h=65;b<=90,h<=85;b++,h++)
+{
+  s2.write(b);
+  s8.write(h);
+  delay(k);
+}
+for(int c=75,d=75;c<=88,d<=90;c++,d++){
+  s3.write(c);
+  s4.write(d);
+  delay(k);
+}
+//------------------------------------------ finished ---------------------------------------------------------
+//-----------------------------------------sit down -------------------------------------------
+
+s1.write(145);
+s2.write(165);
+s3.write(30);
+s4.write(30);
+
+s5.write(130);
+s6.write(180);
+s7.write(60);
+s8.write(0);
+//------------------------------------------ finished ---------------------------------------------------------
+//-----------------------------------------handshaking --------------------------------------------------------
+s1.write(130);
+s2.write(120);
+s3.write(35);
+s4.write(70);
+s5.write(180);
+s7.write(60);
+s8.write(30);
+for(int f=145;f>=50;f--)
+{
+ 
+  s6.write(f);
+  delay(15);
+}
+for(int f=50;f<=145;f++)
+{
+ 
+  s6.write(f);
+  delay(15);
+}
+
+//------------------------------------------ finished ---------------------------------------------------------
+//-----------------------------------------head down --------------------------------------------------------
+s1.write(60);
+s2.write(60);
+s3.write(105);
+s4.write(130);
+s5.write(180);
+s6.write(120);
+s7.write(0);
+s8.write(40);
+------------------------------------------ finished ---------------------------------------------------------
+//-----------------------------------------leg down and hand extend --------------------------------------------------------
+
+s1.write(145);
+s2.write(165);
+s3.write(30);
+s4.write(30);
+s5.write(180);
+s6.write(120);
+s7.write(0);
+s8.write(40);
+------------------------------------------ finished ---------------------------------------------------------
+//-----------------------------------------full down --------------------------------------------------------
+
+s1.write(145);
+s2.write(165);
+s3.write(30);
+s4.write(30);
+
+s5.write(30);
+s6.write(5);
+s7.write(155);
+s8.write(165);
+//------------------------------------------ finished ---------------------------------------------------------
+//-----------------------------------------push up --------------------------------------------------------
+s1.write(0);
+s2.write(60);
+s3.write(180);
+s4.write(150);
+
+s5.write(130);
+//s6.write(180);
+s7.write(60);
+//s8.write(0);
+for(int h=90,f=90;h>=0,f<=180;h--,f++)
+{
+  s8.write(h);
+  s6.write(f);
+  delay(7);
+}
+
+for(int h=0,f=180;h<=90,f>=90;h++,f--)
+{
+   s8.write(h);
+  s6.write(f);
+  delay(7);
+}
+//-----------------------------------------finished --------------------------------------------------------
+//-----------------------------------------moving head --------------------------------------------------------
+//s9.write(180);
+//s9.write(0);
+for(int i=0;i<=180;i++)
+{
+  s9.write(i);
+  delay(15);
+}
+for(int i=180;i>=0;i--)
+{
+  s9.write(i);
+  delay(15);
+}
+//-----------------------------------------finished --------------------------------------------------------
+//*************************************** Ultrasonic Sensor **********************************************
+ long duration, distance;
+
+digitalWrite(trigPin, LOW);
+
+delayMicroseconds(2);
+
+digitalWrite(trigPin, HIGH);
+
+delayMicroseconds(10);
+
+digitalWrite(trigPin, LOW);
+
+duration = pulseIn(echoPin, HIGH);
+
+distance = (duration/2) / 29.1;
+
+if (distance < 13)
+
+{ 
+//-------leg down and hand extend ---------
+
+s1.write(145);
+s2.write(165);
+s3.write(30);
+s4.write(30);
+s5.write(180);
+s6.write(120);
+s7.write(0);
+s8.write(40);
+
+}
+
+else {
+
+//------head down ---------
+s1.write(60);
+s2.write(60);
+s3.write(105);
+s4.write(130);
+s5.write(180);
+s6.write(120);
+s7.write(0);
+s8.write(40);
+
+}
+//************************************* finished *******************************
+//*************************************** 90 Degree ***************************
+s1.write(80);
+s2.write(90);
+s3.write(88);
+s4.write(90);
+s5.write(90);
+s6.write(90);
+s7.write(95);
+s8.write(85);
+s9.write(90);
+//************************************* finished *******************************
+//----------------------------------------------------for forward walking -------------------------------------------------------
+// can use delay(3-7)
+ for(int c=88,f=90;c>=55,f>=60;c--,f--)
+ {
+  s3.write(c);
+  s6.write(f);
+  delay(k);
+ }
+ for(int d=90,e=90;d<=125,e<=130;d++,e++)
+ {
+  s4.write(d);
+  s5.write(e);
+  delay(k);
+ }
+  for(int c=55,f=60;c<=88,f<=90;c++,f++)
+ {
+  s3.write(c);
+  s6.write(f);
+  delay(k);
+ }
+ for(int d=125,e=130;d>=90,e>=90;d--,e--)
+ {
+  s4.write(d);
+  s5.write(e);
+  delay(k);
+ }
+
+///---------------------------------------------------------
+
+for(int d=90;d>=80;d--)
+{
+  s4.write(d);
+  delay(k);
+}
+s3.write(88);
+
+
+for(int a=80,g=95;a<=100,g>=70;a++,g--)
+{
+  s1.write(a);
+  s7.write(g);
+  delay(k);
+}
+
+for(int b=90,h=85;b>=75,h<=110;b--,h++)
+{
+  s2.write(b);
+  s8.write(h);
+  delay(k);
+}
+
+for(int a=100,g=70;a>=80,g<=95;a--,g++)
+{
+  s1.write(a);
+  s7.write(g);
+  delay(k);
+}
+for(int b=75,h=110;b<=90,h>=85;b++,h--)
+{
+  s2.write(b);
+  s8.write(h);
+  delay(k);
+}
+
+for(int d=80;d<=90;d++)
+{
+  s4.write(d);
+  delay(k);
+}
+//*************************************** finished *********************************
+                 
+
+}
