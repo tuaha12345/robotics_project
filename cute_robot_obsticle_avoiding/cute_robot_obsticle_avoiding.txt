@@ -1,0 +1,218 @@
+#include <Servo.h>          //Servo motor library. This is standard library //Robot Lk
+#include <NewPing.h>        //Ultrasonic sensor function library. You must install this library //Robot Lk
+
+
+
+#define ENA   14          // Enable/speed motors Right        GPIO14(D5)
+#define ENB   12          // Enable/speed motors Left         GPIO12(D6)
+#define IN_1  15          // L298N in1 motors Right           GPIO15(D8)//back
+#define IN_2  13          // L298N in2 motors Right           GPIO13(D7)
+#define IN_3  2           // L298N in3 motors Left            GPIO2(D4)//back
+#define IN_4  0           // L298N in4 motors Left            GPIO0(D3)
+//Robot Lk YouTube Channel-https://www.youtube.com/c/RobotLk
+//sensor pins
+#define trig_pin D1 //analog input 1
+#define echo_pin D2 //analog input 2
+
+#define maximum_distance 200
+boolean goesForward = false;
+int distance = 100;
+int speedCar = 800;
+int speed_Coeff = 3;
+
+NewPing sonar(trig_pin, echo_pin, maximum_distance); //sensor function
+Servo servo_motor; //our servo name
+
+//Robot Lk
+void setup(){
+
+  pinMode(IN_2, OUTPUT);
+  pinMode(IN_4 , OUTPUT);
+  pinMode(IN_3, OUTPUT);
+  pinMode(IN_1, OUTPUT);
+
+  servo_motor.attach(D0); //our servo pin
+
+  servo_motor.write(115);
+  delay(2000);
+  distance = readPing();
+  delay(100);
+  distance = readPing();
+  delay(100);
+  distance = readPing();
+  delay(100);
+  distance = readPing();
+  delay(100);
+}
+
+void loop(){
+
+  int distanceRight = 0;
+  int distanceLeft = 0;
+  delay(50);
+
+  if (distance <= 25){
+    stopRobot();
+    delay(300);
+    distanceRight = lookRight();
+    delay(300);
+    distanceLeft = lookLeft();
+    delay(300);
+
+    if (distance >= distanceLeft){
+
+      goRight();
+      delay(300);
+      stopRobot();
+      delay(300);
+    }
+    else{
+
+      goLeft();
+      delay(300);
+      stopRobot();
+      delay(300);
+    }
+  }
+  else{
+    goAhead(); 
+    delay(40);
+    stopRobot();
+    delay(40);
+  }
+    distance = readPing();
+  
+}
+
+int lookRight(){  
+
+   
+
+  servo_motor.write(0);
+  delay(700);
+  int distance = readPing();
+  delay(100);
+  servo_motor.write(90);
+  return distance;
+}
+
+int lookLeft(){
+
+
+ 
+  servo_motor.write(180);
+  delay(700);
+  int distance = readPing();
+  delay(100);
+  servo_motor.write(90);
+  return distance;
+  delay(100);
+}
+
+int readPing(){
+  delay(70);
+  int cm = sonar.ping_cm();
+  if (cm==0){
+    cm=250;
+  }
+  return cm;
+}
+
+void goAhead(){ 
+
+      digitalWrite(IN_1, LOW);
+      digitalWrite(IN_2, HIGH);
+      analogWrite(ENA, speedCar);
+
+      digitalWrite(IN_3, LOW);
+      digitalWrite(IN_4, HIGH);
+      analogWrite(ENB, speedCar);
+  }
+
+void goBack(){ 
+
+      digitalWrite(IN_1, HIGH);
+      digitalWrite(IN_2, LOW);
+      analogWrite(ENA, speedCar);
+
+      digitalWrite(IN_3, HIGH);
+      digitalWrite(IN_4, LOW);
+      analogWrite(ENB, speedCar);
+  }
+
+void goRight(){ 
+
+      digitalWrite(IN_1, HIGH);
+      digitalWrite(IN_2, LOW);
+      analogWrite(ENA, speedCar);
+
+      digitalWrite(IN_3, LOW);
+      digitalWrite(IN_4, HIGH);
+      analogWrite(ENB, speedCar);
+  }
+
+void goLeft(){
+
+      digitalWrite(IN_1, LOW);
+      digitalWrite(IN_2, HIGH);
+      analogWrite(ENA, speedCar);
+
+      digitalWrite(IN_3, HIGH);
+      digitalWrite(IN_4, LOW);
+      analogWrite(ENB, speedCar);
+  }
+
+void goAheadRight(){
+      
+      digitalWrite(IN_1, LOW);
+      digitalWrite(IN_2, HIGH);
+      analogWrite(ENA, speedCar/speed_Coeff);
+ 
+      digitalWrite(IN_3, LOW);
+      digitalWrite(IN_4, HIGH);
+      analogWrite(ENB, speedCar);
+   }
+
+void goAheadLeft(){
+      
+      digitalWrite(IN_1, LOW);
+      digitalWrite(IN_2, HIGH);
+      analogWrite(ENA, speedCar);
+
+      digitalWrite(IN_3, LOW);
+      digitalWrite(IN_4, HIGH);
+      analogWrite(ENB, speedCar/speed_Coeff);
+  }
+
+void goBackRight(){ 
+
+      digitalWrite(IN_1, HIGH);
+      digitalWrite(IN_2, LOW);
+      analogWrite(ENA, speedCar/speed_Coeff);
+
+      digitalWrite(IN_3, HIGH);
+      digitalWrite(IN_4, LOW);
+      analogWrite(ENB, speedCar);
+  }
+
+void goBackLeft(){ 
+
+      digitalWrite(IN_1, HIGH);
+      digitalWrite(IN_2, LOW);
+      analogWrite(ENA, speedCar);
+
+      digitalWrite(IN_3, HIGH);
+      digitalWrite(IN_4, LOW);
+      analogWrite(ENB, speedCar/speed_Coeff);
+  }
+
+void stopRobot(){  
+
+      digitalWrite(IN_1, LOW);
+      digitalWrite(IN_2, LOW);
+      analogWrite(ENA, speedCar);
+
+      digitalWrite(IN_3, LOW);
+      digitalWrite(IN_4, LOW);
+      analogWrite(ENB, speedCar);
+ }
