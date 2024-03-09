@@ -1,0 +1,82 @@
+#include <Servo.h>
+// Motor Driver Pins
+const int leftMotorPin1 = 7;
+const int rightMotorPin1 = 6;
+
+// Flame Sensor Pins
+const int flameSensor1 = 10;
+const int flameSensor2 = 9;
+const int flameSensor3 = 8;
+
+// Define servo control pin
+const int servoPin = 11;
+const int fan = 5;
+
+Servo myservo;
+void setup() {
+  myservo.attach(servoPin);
+  // Define motor pins as OUTPUT
+  pinMode(leftMotorPin1, OUTPUT);
+  pinMode(rightMotorPin1, OUTPUT);
+  pinMode(fan, OUTPUT);
+
+  // Define flame sensor pins as INPUT
+  pinMode(flameSensor1, INPUT);
+  pinMode(flameSensor2, INPUT);
+  pinMode(flameSensor3, INPUT);
+}
+
+void loop() {
+  int flame1 = digitalRead(flameSensor1);
+  int flame2 = digitalRead(flameSensor2);
+  int flame3 = digitalRead(flameSensor3);
+
+  // All flame sensors off - stop both motors
+  if (flame1==HIGH && flame2==HIGH && flame3==HIGH) {
+    stopMotors();
+    myservo.write(90);
+    digitalWrite(fan,HIGH);
+  }
+  // Flame detected by sensor 1 - move both motors forward
+  else if (flame1==LOW) {
+    moveForward();
+    myservo.write(90);
+    digitalWrite(fan,LOW);
+  }
+  // Flame detected by sensor 2 - move right motor forward
+  else if (flame2==LOW && flame3==HIGH) {
+    moveRight();
+    myservo.write(0);
+    digitalWrite(fan,LOW);
+  }
+  // Flame detected by sensor 3 - move left motor forward
+  else if (flame3==LOW && flame2==HIGH) {
+    moveLeft();
+    myservo.write(180);
+    digitalWrite(fan,LOW);
+  }
+}
+
+// Function to stop both motors
+void stopMotors() {
+  digitalWrite(leftMotorPin1, LOW);
+  digitalWrite(rightMotorPin1, LOW);
+}
+
+// Function to move both motors forward
+void moveForward() {
+  digitalWrite(leftMotorPin1, HIGH);
+  digitalWrite(rightMotorPin1, HIGH);
+}
+
+// Function to move right motor forward
+void moveRight() {
+  digitalWrite(leftMotorPin1, HIGH);
+  digitalWrite(rightMotorPin1, LOW);
+}
+
+// Function to move left motor forward
+void moveLeft() {
+  digitalWrite(leftMotorPin1, LOW);
+  digitalWrite(rightMotorPin1, HIGH);
+}
