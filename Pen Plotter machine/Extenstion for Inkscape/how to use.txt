@@ -1,0 +1,6 @@
+1.Go->Program Files (x86)\Inkscape\share\extensions
+2.Then paste the Ml Inkscape Extension folder here
+3. Now go Program Files (x86)\Inkscape\share\extensions\Ml Inkscape Extension and copy 
+   all the file insde it 
+4.Now go Program Files (x86)\Inkscape\share\extensions again and paste these file here
+  (NB:Windows will asked you for the permission to replace these fill with current file)
