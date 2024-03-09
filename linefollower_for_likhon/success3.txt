@@ -1,0 +1,193 @@
+// Motor A connections
+int enL = 9;
+//analogWrite(enL, 255);
+int motor_left = 8;
+
+// Motor B connections
+int enR = 11;
+int motor_right = 10;
+int dig=13;
+
+// backward
+int b1=12;
+int b2=13;
+// count
+int count=0;
+
+// IR array
+int ir1 = A1;
+int ir2 = A2;
+int ir3 = A3;
+int ir4 = A4;
+int ir5 = A5;
+// sensor
+int s1,s2,s3,s4,s5;
+void setup() {
+  Serial.begin(9600);
+  // Set all the motor control pins to outputs
+  pinMode(enL, OUTPUT);
+  pinMode(enR, OUTPUT);
+  pinMode(motor_left, OUTPUT);
+  pinMode(motor_right, OUTPUT);
+
+
+   pinMode(ir1, INPUT);
+   pinMode(ir2, INPUT);
+   pinMode(ir3, INPUT);
+   pinMode(ir4, INPUT);
+   pinMode(ir5, INPUT);
+}
+
+void loop() {
+
+//  analogWrite(enL, 55);
+//  analogWrite(enR, 55);
+//   digitalWrite(motor_right, HIGH);
+//     digitalWrite(motor_left, HIGH);
+//  directionControl();
+ s1=digitalRead(ir1);
+ s2=digitalRead(ir2);
+ s3=digitalRead(ir3);
+ s4=digitalRead(ir4);
+ s5=digitalRead(ir5);
+
+ directionControl();
+
+Serial.println(s5);
+Serial.println("      -----");
+//Serial.println(s5);
+
+
+}
+
+
+void directionControl() {
+  
+////////////////////////////////////////////  first condition ////////////////////////////////
+    if ((s4 ==HIGH  && s5 ==HIGH ) && (s3==LOW || s2==LOW || s1==LOW && count<50)) // Check if the pin high or not
+  {   
+   
+   right_motor_run(200,40,50);
+ 
+  }
+
+   if((s1 ==HIGH  && s2 ==HIGH ) && (s3==LOW || s4==LOW || s5==LOW && count<50))
+  {
+    
+     left_motor_run(200,40,50);
+    
+  }
+////////////////////////////////////////////  second condition ////////////////////////////////
+  if(s4 ==LOW  && s5 ==HIGH)
+  {
+    right_motor_run(150,30,50);
+     count=0;
+  }
+ if(s2 ==LOW  && s1 ==HIGH)
+  {
+    left_motor_run(150,30,50);
+     count=0;
+  }
+
+////////////////////////////////////////////  third condition ////////////////////////////////
+  if(s4 ==HIGH  && s5 ==LOW)
+  {
+    right_motor_run(0,10,50);
+     count=0;
+  }
+ if(s2 ==HIGH  && s1 ==LOW)
+  {
+    left_motor_run(0,10,50);
+     count=0;
+    
+  }
+////////////////////////////////////////////  fourth condition ////////////////////////////////
+  if(s1 ==HIGH  && s2 ==HIGH && s3 ==HIGH  && s4 ==HIGH && s5 ==HIGH )
+  {
+      
+   count+=1;
+   delay(100);  
+                                                                                                         
+   if(count>20)
+   {
+    backward();
+     
+   }
+   else
+   {
+       right_motor_run(180,40,50);  
+   left_motor_run(180,40,50);
+   }
+   
+  }
+
+
+
+
+
+
+    
+  else  {
+     digitalWrite(motor_right, LOW);
+     digitalWrite(motor_left, LOW);
+  }
+  
+ 
+}
+// 155 best
+void right_motor_run(int r,int dh, int dl)
+{
+         analogWrite(enR, r);
+       digitalWrite(motor_right, HIGH);
+       delay(dh);
+       digitalWrite(motor_right, LOW);
+       delay(dl);
+}
+
+void left_motor_run(int l,int dh, int dl)
+{
+  analogWrite(enL, l);
+    digitalWrite(motor_left, HIGH);
+    delay(dh);
+    digitalWrite(motor_left, LOW);
+    delay(dl);
+}
+
+void both_motor_run(int n)
+{
+  analogWrite(enL, 170);
+  analogWrite(enR, 150);
+    digitalWrite(motor_left, HIGH);
+    digitalWrite(motor_right, HIGH);
+    delay(30);
+    digitalWrite(motor_left, LOW);
+    digitalWrite(motor_right, LOW);
+    delay(50);
+}
+
+void backward()
+{
+    
+    analogWrite(enR, 200);
+    analogWrite(enL, 200);
+    digitalWrite(b1,HIGH);
+    digitalWrite(b2,HIGH);
+    delay(20);
+    digitalWrite(b1,LOW);
+    digitalWrite(b2,LOW);
+    delay(50);
+  
+//    else
+//    {
+//      right_motor_run(180,40,50);
+//      left_motor_run(180,40,50);
+//    }
+
+    if(s1 ==LOW || s2 ==LOW  || s3 ==LOW  || s4 ==LOW  || s5 ==LOW )
+    {
+      count=0;
+      return 0;   
+    }
+    
+    return ;
+}
