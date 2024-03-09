@@ -1,0 +1,292 @@
+
+#include <Servo.h>
+#include <NewPing.h>
+#define ANALOG_IN_PIN A0
+#define M_one_F  8
+#define M_one_B  9
+#define M_two_B  10
+#define M_two_F  11
+#define M_one_pwm 12
+#define M_two_pwm 13
+int pwm = 150;
+int buzzer=13;
+int motor=A1;
+
+int metal_data_send=3;
+int gas_data_send=2;
+#define trig_pin 7 //analog input 1  
+#define echo_pin 6 //analog input 2  
+#define maximum_distance 500
+boolean goesForward = false;
+int distance = 100;
+int count=0;
+int GasSensor=4;////////// gas sensor
+NewPing sonar(trig_pin, echo_pin, maximum_distance); //sensor function
+Servo servo_motor;//our servo name
+////////////////////////////////// voltage sensor part///////////////////////
+ #define ANALOG_IN_PIN A0
+// Floats for ADC voltage & Input voltage
+float adc_voltage = 0.0;
+float in_voltage = 0.0;
+ 
+// Floats for resistor values in divider (in ohms)
+float R1 = 30000.0;
+float R2 = 7500.0; 
+ 
+// Float for Reference Voltage
+float ref_voltage = 5.0;
+// Integer for ADC value
+int adc_value = 0;
+////////////////////////////////// voltage sensor part///////////////////////
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(M_one_B, OUTPUT);
+  pinMode(M_one_F, OUTPUT);
+  pinMode(M_two_F, OUTPUT);
+  pinMode(M_two_B, OUTPUT);
+  pinMode(M_one_pwm, OUTPUT);
+  pinMode(M_two_pwm, OUTPUT);
+  motor_stop();
+  pinMode(buzzer,OUTPUT);
+  pinMode(GasSensor,INPUT);
+  pinMode(metal_data_send,OUTPUT);
+  pinMode(gas_data_send,OUTPUT);
+  pinMode(motor, OUTPUT);
+  
+
+  servo_motor. attach(5);//our servo pin
+  servo_motor.write(90);
+  delay(2000);
+  distance = readPing();
+  delay(100);
+  distance = readPing();
+  delay(100);
+  distance = readPing();
+  delay(100);
+  distance = readPing();
+  delay(100);
+
+}
+/////////////////////------------------------------------------------- loop-----------------------------
+void loop() {
+  /////---------------------------------------------------- voltage sensor working --------
+  // Read the Analog Input
+   adc_value = analogRead(ANALOG_IN_PIN);
+//   Serial.println(adc_value);
+//   delay(150);
+//   
+   // Determine voltage at ADC input
+   adc_voltage  = (adc_value * ref_voltage) / 1024.0; 
+   
+   // Calculate voltage at divider input
+   in_voltage = adc_voltage / (R2/(R1+R2)) ; 
+   
+   // Print results to Serial Monitor to 2 decimal places
+  Serial.print("Input Voltage = ");
+  Serial.println(in_voltage, 2);
+  int distanceRight = 0;
+  int distanceLeft = 0;
+//  delay(50);
+//////----------------------------------------------- end of voltage sensor
+int sensorValue = digitalRead(GasSensor);////------------- gas sensor working
+if(sensorValue == LOW)
+{
+  digitalWrite(buzzer,HIGH);
+  digitalWrite(gas_data_send,HIGH);
+  delay(100);
+  motor_stop();
+  
+}
+      
+else if(in_voltage>4.5)
+     {
+//                    digitalWrite(buzzer,HIGH);
+//                    delay(100);
+                    count+=1;
+//                    Serial.println(count);
+                       motor_stop();
+                    if(count>15)
+                    {
+                      digitalWrite(buzzer,HIGH);
+                      digitalWrite(motor, HIGH);
+                    delay(100);
+                    digitalWrite(metal_data_send,HIGH);
+                      if(count>100)
+                      {
+                        
+                        motor_move();
+                        delay(50);
+                        
+                      }
+
+//                      else{
+//                        digitalWrite(motor,LOW);
+//                      }
+//                      
+                      
+                    }
+
+                    else{
+                      digitalWrite(motor,LOW);
+                    }
+                   
+                    
+                       
+                
+                    
+     }
+
+
+
+
+                
+ else{
+  digitalWrite(metal_data_send,LOW);
+  digitalWrite(gas_data_send,LOW);
+   digitalWrite(motor,LOW);
+                   count=0;
+                    digitalWrite(buzzer,LOW);
+                  if (distance <= 25) {
+    //Serial.println(distance);
+    motor_stop();
+    delay(400);
+    //     moveBackward();
+    //     delay(400);
+    //     moveStop();
+    //     delay(400);
+    distanceRight = lookRight();
+    delay(400);
+    distanceLeft = lookLeft();
+    delay(400);
+
+    if (distance >= distanceLeft) { /////////////////// right turn
+       digitalWrite(M_two_F, HIGH);
+       digitalWrite(M_two_B, LOW);
+
+       digitalWrite(M_one_F, LOW);
+       digitalWrite(M_one_B, HIGH);
+       delay(70);
+    }
+    else {                        /////////////////// left turn
+        digitalWrite(M_one_B, LOW);
+        digitalWrite(M_one_F, HIGH);
+
+        digitalWrite(M_two_B, HIGH);
+        digitalWrite(M_two_F, LOW);
+        delay(70);
+
+    }
+  }
+
+
+
+
+  
+
+  else{
+    
+    forward(); delay(20);
+    motor_stop(); delay(5);
+  }
+                   distance = readPing();
+}
+
+
+
+
+
+  ///////////------------------------------------ end of voltage sensor
+
+}
+/////////////////////------------------------------------------------- end of loop-----------------------------
+void motor_move()
+{
+//  motor_stop();   delay(30);
+
+  forward(); delay(20);
+  motor_stop(); delay(5);
+}
+///////////////////////////////////// move forward
+void forward()
+{
+
+//    analogWrite(M_two_pwm, pwm);
+//  digitalWrite(M_two_F, HIGH);
+//  digitalWrite(M_two_B, LOW);
+  
+  analogWrite(M_one_pwm, pwm); //0-255
+  digitalWrite(M_one_B, LOW);
+  digitalWrite(M_one_F, HIGH);
+  delay(2);
+
+  analogWrite(M_two_pwm, pwm);
+  digitalWrite(M_two_F, HIGH);
+  digitalWrite(M_two_B, LOW);
+  
+  
+}
+//////////////////////////////////// motor_one_forward
+void motor_one_forward()
+{
+
+  analogWrite(M_one_pwm, pwm); //0-255
+  digitalWrite(M_one_B, LOW);
+  digitalWrite(M_one_F, HIGH);
+
+  digitalWrite(M_two_B, LOW);
+  digitalWrite(M_two_F, LOW);
+
+
+}
+//////////////////////////////////// motor_two_forward
+void motor_two_forward()
+{
+
+
+  analogWrite(M_two_pwm, pwm);
+  digitalWrite(M_two_F, HIGH);
+  digitalWrite(M_two_B, LOW);
+
+  digitalWrite(M_one_F, LOW);
+  digitalWrite(M_one_B, LOW);
+
+}
+void motor_stop()
+{
+  digitalWrite(M_one_B, LOW);
+  digitalWrite(M_one_F, LOW);
+  digitalWrite(M_two_F, LOW);
+  digitalWrite(M_two_B, LOW);
+  analogWrite(M_one_pwm, 0);
+  analogWrite(M_two_pwm, 0);
+}
+
+int lookRight() {
+
+  servo_motor.write(0);
+  delay(500);
+  int distance = readPing();
+  delay(100);
+  servo_motor.write(90);
+  return distance;
+
+}
+
+int lookLeft() {
+  servo_motor.write(180);
+  delay(500);
+  int distance = readPing();
+  delay(100);
+  servo_motor.write(90);
+  return distance;
+  delay(100);
+}
+int readPing() {
+  delay(70);
+  int cm = sonar.ping_cm();
+  if (cm == 0) {
+    cm = 250;
+  }
+  return cm;
+}
