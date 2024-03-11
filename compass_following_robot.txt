@@ -1,0 +1,107 @@
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_HMC5883_U.h>
+
+/* Assign a unique ID to this sensor at the same time */
+Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
+// Motor A connections
+int enA = 8;
+int m1 = 9;
+// Motor B connections
+int enB = 11;
+int m2= 10;
+float pos1=200;
+float pos2=190;
+void displaySensorDetails(void)
+{
+  sensor_t sensor;
+  delay(500);
+}
+
+void setup(void) 
+{
+  Serial.begin(9600);
+   pinMode(enA, OUTPUT);
+  pinMode(enB, OUTPUT);
+
+  pinMode(m1, OUTPUT);
+  pinMode(m2, OUTPUT);
+
+  if(!mag.begin())
+  {
+    /* There was a problem detecting the HMC5883 ... check your connections */
+    Serial.println("Ooops, no HMC5883 detected ... Check your wiring!");
+    while(1);
+  }
+  
+  /* Display some basic information on this sensor */
+  displaySensorDetails();
+}
+
+void loop(void) 
+{
+  /* Get a new sensor event */ 
+  sensors_event_t event; 
+  mag.getEvent(&event);
+ 
+
+  // Hold the module so that Z is pointing 'up' and you can measure the heading with x&y
+  // Calculate heading when the magnetometer is level, then correct for signs of axis.
+  float heading = atan2(event.magnetic.y, event.magnetic.x);
+
+  float declinationAngle = 0.22;
+  heading += declinationAngle;
+  
+  // Correct for when signs are reversed.
+  if(heading < 0)
+    heading += 2*PI;
+    
+  // Check for wrap due to addition of declination.
+  if(heading > 2*PI)
+    heading -= 2*PI;
+   
+  // Convert radians to degrees for readability.
+  float headingDegrees = heading * 180/M_PI; 
+  
+  Serial.print("Heading (degrees): "); Serial.println(headingDegrees);
+  
+ if( headingDegrees > pos1 && headingDegrees < 360.00 )
+ {
+
+     digitalWrite(m2, LOW);
+  digitalWrite(enA,LOW);
+
+     digitalWrite(m1, HIGH);
+   digitalWrite(enB,HIGH);
+   delay(10);
+     digitalWrite(m1, LOW);
+  digitalWrite(enB,LOW);
+  delay(50);
+ }
+ 
+
+
+
+ else if( headingDegrees < pos2  && headingDegrees > 5.00)
+ {
+   digitalWrite(m1, LOW);
+  digitalWrite(enB,LOW);
+
+    digitalWrite(m2, HIGH);
+  digitalWrite(enA,HIGH);
+  delay(10);
+    digitalWrite(m2, LOW);
+  digitalWrite(enA,LOW);
+  delay(50);
+  
+
+
+ }
+
+ else{
+     digitalWrite(m1, LOW);
+   digitalWrite(m2, LOW);
+   digitalWrite(enA,LOW);
+   digitalWrite(enB,LOW);
+ }
+}
