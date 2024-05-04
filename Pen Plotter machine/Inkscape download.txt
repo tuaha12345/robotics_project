@@ -1,0 +1,4 @@
+1. Download and install Inkscape 0.48
+2. Here the download link:
+https://inkscape.org/release/inkscape-0.48/
+ 
