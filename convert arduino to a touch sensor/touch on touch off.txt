@@ -1,0 +1,150 @@
+/********************************
+ *   Capacitive touch sensors   *
+ * Esperienze Elettroniche 2021 *
+ ********************************/
+#define THRES 200
+#define SAMPLES 20
+
+//#define SERIAL_DEBUG
+
+#define LED1 2
+#define LED2 3
+#define LED3 4
+#define LED4 5
+
+typedef struct touchPad{
+  int pin;
+  int unpValue;
+  int value;
+  char state=0, prevState=0;
+  char toggleState=0;
+};
+
+touchPad touchPad1, touchPad2, touchPad3, touchPad4;
+
+void setup() {
+  /* Set A0 pull-up resistor, used to charge internal capacitor */
+  pinMode(A0, INPUT_PULLUP);
+  analogRead(A0);
+  
+  pinMode(LED1, OUTPUT);
+  digitalWrite(LED1, 0);
+  pinMode(LED2, OUTPUT);
+  digitalWrite(LED2, 0);
+  pinMode(LED3, OUTPUT);
+  digitalWrite(LED3, 0);
+  pinMode(LED4, OUTPUT);
+  digitalWrite(LED4, 0);
+
+  /* Initialize sensors */
+  touchPadInit(&touchPad1, A1);
+  touchPadInit(&touchPad2, A2);
+  touchPadInit(&touchPad3, A3);
+  touchPadInit(&touchPad4, A4);
+
+#ifdef SERIAL_DEBUG
+  Serial.begin(57600);
+#endif
+}
+
+void loop() {
+  /* Scan sensors */
+  touchPadScan(&touchPad1);
+  touchPadScan(&touchPad2);
+  touchPadScan(&touchPad3);
+  touchPadScan(&touchPad4);
+
+  /* Use sensors reding to control LEDs */
+  digitalWrite(LED1, touchPad1.toggleState);
+  digitalWrite(LED2, touchPad2.toggleState);
+  digitalWrite(LED3, touchPad3.toggleState);
+  digitalWrite(LED4, touchPad4.toggleState);
+
+  delay(10);
+
+#ifdef SERIAL_DEBUG
+  Serial.print(touchPad1.value);
+  Serial.print(",");
+  Serial.print(touchPad2.value);
+  Serial.print(",");
+  Serial.print(touchPad3.value);
+  Serial.print(",");
+  Serial.println(touchPad4.value);
+#endif
+}
+
+void touchPadInit(touchPad *pad, int pin){
+  pad->pin=pin;
+  pad->unpValue = (sampleB(pin) - sampleA(pin));
+  DIDR0 |= 1;
+  DIDR0 |= 1<<(pin-A0);
+}
+
+int sampleA(int sensePin){
+  /* Sample capacitor is charged to VCC
+   * via A0 pull-up resistor, touch pad
+   * is discharged by pulling pin low
+   */
+  ADMUX = 0b01000000;
+  pinMode(sensePin, OUTPUT);
+  digitalWrite(sensePin, 0);
+  
+  pinMode(sensePin, INPUT);
+  ADMUX = 0b01000000 | sensePin-A0;
+
+  ADCSRA |= 1<<ADSC;
+  while((ADCSRA & (1<<ADSC)) != 0);
+  
+  return ADC;
+}
+
+int sampleB(int sensePin){
+  /* Sample capacitor is discharged by selecting
+   * GND as ADC input, touch pad is charged to VCC
+   * via pin pull-up resistor
+   */
+  ADMUX = 0b01001111;
+  pinMode(sensePin, INPUT_PULLUP);
+  
+  pinMode(sensePin, INPUT);
+  ADMUX = 0b01000000 | sensePin-A0;
+
+  ADCSRA |= 1<<ADSC;
+  while((ADCSRA & (1<<ADSC)) != 0);
+  
+  return ADC;
+}
+
+void touchPadScan(touchPad *pad){
+  static float A, B;
+
+  A=0;
+  B=0;
+
+  /* Get some readings from sensor and calculate average */
+  for(int i=0; i<SAMPLES; i++){
+    A += sampleA(pad->pin);
+    B += sampleB(pad->pin);
+  }
+
+  A /= SAMPLES;
+  B /= SAMPLES;
+  
+  pad->value = (B - A);
+
+  /* Member unpValue is a running average of the unpressed readings.
+   * A sudden change in sensor reading is interpreted as a touch
+   */
+  if(pad->value > (pad->unpValue + THRES))
+    pad->state=1;
+  else{
+    pad->state=0;
+    pad->unpValue=((float)pad->unpValue*0.9)+((float)pad->value*0.1);
+  }
+  
+  if(pad->state == 1 && pad->prevState == 0)
+    pad->toggleState = !pad->toggleState;
+
+  pad->prevState = pad->state;
+}
+
