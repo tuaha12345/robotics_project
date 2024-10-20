@@ -1,0 +1,116 @@
+#include <Servo.h>
+
+Servo myservo;
+#define ENA 2 // Enable pin
+#define pwmPin1 5 // PWM pin 1 for motor 1
+#define pwmPin2 6 // PWM pin 2 for motor 2
+#define encoder A0 // Encoder pin
+
+int potpin = A1;  // analog pin used to connect the potentiometer
+int val = 0;    // variable to read the value from the analog pin
+int numReadings = 10; // Number of readings to average
+int readings[10]; // Array to store readings
+int index = 0; // Index for readings array
+int total = 0; // Total for averaging
+
+// Constants
+float offset = 0;
+String input;
+
+void setup() {
+  pinMode(ENA, OUTPUT);
+  Serial.begin(115200);
+}
+
+void loop() {
+   total -= readings[index]; // Subtract the oldest reading
+  readings[index] = analogRead(potpin); // Read from the potentiometer
+  total += readings[index]; // Add the new reading
+  index = (index + 1) % numReadings; // Move to the next index
+  val = total / numReadings; // Calculate the average value
+
+  val = map(val, 0, 1023, 0, 180);     // scale it to use it with the servo (value between 0 and 180)
+                 // sets the servo position according to the scaled value
+  Serial.println(val);
+  //delay(100); // Wait for the servo to reach the position
+
+  moveTo(val);
+
+  Serial.print("Sernsor value:");
+  Serial.println(getPos());
+ // inputPos();
+  //forward();
+}
+
+void forward() {
+  digitalWrite(ENA, HIGH);
+  analogWrite(pwmPin1, 255); // Set motor 1 to move forward at full speed
+  analogWrite(pwmPin2, 255); // Set motor 2 to move forward at full speed
+}
+
+void stopp() {
+  digitalWrite(ENA, LOW); // Disable the motor driver
+  analogWrite(pwmPin1, 0); // Stop motor 1
+  analogWrite(pwmPin2, 0); // Stop motor 2
+}
+
+float moveTo(float setpoint) {
+  float error, out;
+
+  float CW_error = setpoint - getPos();
+  if (CW_error < 0) {
+    CW_error = CW_error + 360;
+  }
+  float CCW_error = getPos() - setpoint;
+  if (CCW_error < 0) {
+    CCW_error = CCW_error + 360;
+  }
+
+  if (CW_error < CCW_error || CW_error == CCW_error) {
+    error = CW_error;
+  }
+  else if (CCW_error < CW_error) {
+    error = -1 * CCW_error;
+  }
+
+  out = 12 * error;
+  out = constrain(out, -255, 255);
+  if (abs(out) < 25) {
+    out = 0;
+  }
+  
+  digitalWrite(ENA, HIGH);
+  if (out > 0) {
+    analogWrite(pwmPin1, 0); // Motor 1 stopped
+    analogWrite(pwmPin2, out); // Motor 2 moves forward
+  }
+  else if (out < 0) {
+    analogWrite(pwmPin1, abs(out)); // Motor 1 moves forward
+    analogWrite(pwmPin2, 0); // Motor 2 stopped
+  }
+  else if (out == 0) {
+    analogWrite(pwmPin1, 0); // Motor 1 stopped
+    analogWrite(pwmPin2, 0); // Motor 2 stopped
+  }
+}
+
+float getPos() {
+  float pos = map(analogRead(encoder), 0, 1023, 0, 359) + offset;
+
+  if (pos < 0) {
+    pos = 359 + pos;
+  }
+  else if (pos > 359) {
+    pos = pos - 359;
+  }
+
+  return pos;
+}
+
+void inputPos() {
+  if (Serial.available() > 0) {
+    input = Serial.readString();
+  }
+  moveTo(input.toInt());
+  Serial.println(getPos());
+}

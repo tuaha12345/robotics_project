@@ -1,0 +1,128 @@
+#include <Servo.h>
+
+Servo myservo;
+#define ENA 2 // Enable pin
+#define pwmPin1 5 // PWM pin 1 for motor 1
+#define pwmPin2 6 // PWM pin 2 for motor 2
+#define encoder A0 // Encoder pin
+#define pwmInputPin 9 // PWM input pin
+
+int potpin = A1; // Analog pin used to connect the potentiometer
+int val = 0; // Variable to read the value from the analog pin
+int numReadings = 10; // Number of readings to average
+int readings[10]; // Array to store readings
+int index = 0; // Index for readings array
+int total = 0; // Total for averaging
+
+// Constants
+float offset = 0;
+String input;
+
+void setup() {
+  pinMode(ENA, OUTPUT);
+  pinMode(pwmInputPin, INPUT); // Set the PWM input pin
+  Serial.begin(115200);
+}
+
+void loop() {
+  // Potentiometer input
+  //------------------ reading potentiometer--------------- 
+  total -= readings[index]; // Subtract the oldest reading
+  readings[index] = analogRead(potpin); // Read from the potentiometer
+  total += readings[index]; // Add the new reading
+  index = (index + 1) % numReadings; // Move to the next index
+  val = total / numReadings; // Calculate the average value
+  val = map(val, 0, 1023, 0, 180); // Scale it to use it with the servo (value between 0 and 180)
+  //------------------- end of potentiometer reading--------------
+
+  // PWM input
+  long duration = pulseIn(pwmInputPin, HIGH); // Read how long the pin is HIGH
+  int pwmVal = map(duration, 500, 2500, 0, 180); // Convert the duration to an angle
+  pwmVal = constrain(pwmVal, 0, 180); // Constrain the angle to valid servo range
+
+  // Here you could choose to use either val or pwmVal depending on your application needs
+  // For example, if you want to prefer PWM input when it's available:
+
+  // if (duration > 0) { // If there's a valid PWM signal
+  //   moveTo(pwmVal);
+  // } else { // Fallback to potentiometer input
+  //   moveTo(val);
+  // }
+ moveTo(pwmVal);
+  Serial.print("Sensor value: ");
+ Serial.println(getPos());
+
+ Serial.print("input value");
+ Serial.println(pwmVal);
+
+    //Serial.print("Duration");
+ // Serial.println(duration);
+  // No need for delay here unless for debugging
+}
+
+void moveTo(float setpoint) {
+  float error, out;
+
+  float CW_error = setpoint - getPos();
+  if (CW_error < 0) {
+    CW_error = CW_error + 360;
+  }
+  float CCW_error = getPos() - setpoint;
+  if (CCW_error < 0) {
+    CCW_error = CCW_error + 360;
+  }
+
+  if (CW_error < CCW_error || CW_error == CCW_error) {
+    error = CW_error;
+  }
+  else if (CCW_error < CW_error) {
+    error = -1 * CCW_error;
+  }
+
+  out = 12 * error;
+  out = constrain(out, -255, 255);
+  if (abs(out) < 25) {
+    out = 0;
+  }
+  
+  digitalWrite(ENA, HIGH);
+  if (out > 0) {
+    analogWrite(pwmPin1, 0); // Motor 1 stopped
+    analogWrite(pwmPin2, out); // Motor 2 moves forward
+  }
+  else if (out < 0) {
+    analogWrite(pwmPin1, abs(out)); // Motor 1 moves forward
+    analogWrite(pwmPin2, 0); // Motor 2 stopped
+  }
+  else if (out == 0) {
+    analogWrite(pwmPin1, 0); // Motor 1 stopped
+    analogWrite(pwmPin2, 0); // Motor 2 stopped
+  }
+
+}
+
+float getPos() {
+   float pos = map(analogRead(encoder), 0, 1023, 0, 359) + offset;
+
+  if (pos < 0) {
+    pos = 359 + pos;
+  }
+  else if (pos > 359) {
+    pos = pos - 359;
+  }
+
+  return pos;
+}
+
+void inputPos() {
+  if (Serial.available() > 0) {
+    input = Serial.readString();
+  }
+  moveTo(input.toInt());
+  Serial.println(getPos());
+
+}
+ 
+
+
+
