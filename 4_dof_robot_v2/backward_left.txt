@@ -1,0 +1,19 @@
+for(int i=90,j=100;i>=80,j>=85;i--,j--)
+{
+ servo1.write(i);
+ servo4.write(j);
+ delay(t);
+}
+knee1_backward(tt,100,60);
+knee2_forward(tt,100,140);
+// knee1_forward(tt,80,115);
+// knee2_backward(tt,125,80);
+for(int i=80,j=85;i<=90,j<=90;i++,j++)
+{
+ servo1.write(i);
+ servo4.write(j);
+ delay(t);
+}
+
+knee1_ground(tt,60,100);
+knee2_ground(tt,140,100);

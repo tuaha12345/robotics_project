@@ -1,0 +1,229 @@
+#include <Servo.h>
+
+Servo servo1;
+Servo servo2;
+Servo servo3;
+Servo servo4;
+Servo servo5;
+Servo servo6;
+
+void setup() {
+  servo1.attach(5);  // Attach servo1 
+  servo2.attach(6);  // Attach servo2 
+  servo3.attach(7);  // Attach servo3 
+
+  servo4.attach(8);  // Attach servo4
+  servo5.attach(9);  // Attach servo5
+  servo6.attach(10);  // Attach servo6
+
+  // note ****************************
+  // robot tend right with servo1 will alwasy increase +++++++
+  // robot tend left with servo1 will alwasy decrease ----------
+
+  // robot tend left with servo4 will alwasy decrease ----------
+  // robot tend right with servo4 will alwasy increase +++++++
+}
+
+void loop() {
+
+int t=10;
+int tt=10;
+//---------------------------------------------
+// servo1.write(90);
+// servo2.write(100);
+// servo3.write(80);
+
+// servo4.write(100);
+// servo5.write(100);
+// servo6.write(80);
+//-----------------------------------------------
+
+//servo3.write(0);//------- up
+//servo2.write(120);
+
+//servo3.write(80);
+
+
+//servo5.write(80);
+//servo6.write(180);----------up
+
+
+for(int i=90,j=100;i>=80,j>=85;i--,j--)
+{
+ servo1.write(i);
+ 
+ servo4.write(j);
+ delay(t);
+}
+knee1_forward(tt,80,115);
+knee2_backward(tt,125,80);
+servo3.write(170);
+servo6.write(60);
+for(int i=80,j=85;i<=100,j<=110;i++,j++)
+{
+ servo1.write(i);
+
+ servo4.write(j);
+ delay(t);
+}
+// knee1_ground(tt,120,100);
+// knee2_ground(tt,80,100);
+
+
+
+knee1_backward(tt,115,80);
+knee2_forward(tt,80,125);
+
+ servo3.write(120);
+ servo6.write(10);
+for(int i=100,j=110;i>=90,j>=100;i--,j--)
+{
+     servo1.write(i);
+     
+   servo4.write(j);
+   delay(t);
+}
+
+//  knee1_ground(tt,80,100);
+// knee2_ground(tt,120,100);
+
+
+
+
+
+}
+
+
+
+
+
+
+void knee1_forward(int t, int s, int e)
+{
+  for(int i=s;i<e;i++)
+  {
+    servo2.write(i);
+    delay(t);
+  }
+}
+
+void knee1_backward(int t, int s, int e)
+{
+  for(int i=s;i>e;i--)
+  {
+    servo2.write(i);
+    delay(t);
+  }
+}
+
+void knee1_ground(int t, int s, int e)
+{ 
+  if(s>e){
+    for(int i=s;i>e;i--)
+    {
+      servo2.write(i);
+      delay(t);
+    }
+
+  }
+  
+  else{
+      for(int i=s;i<e;i++)
+    {
+      servo2.write(i);
+      delay(t);
+    }
+  }
+
+}
+
+///------------------ knee2------------------------
+void knee2_forward(int t, int s, int e)
+{
+  for(int i=s;i<e;i++)
+  {
+    servo5.write(i);
+    delay(t);
+  }
+}
+
+void knee2_backward(int t, int s, int e)
+{
+  for(int i=s;i>e;i--)
+  {
+    servo5.write(i);
+    delay(t);
+  }
+}
+
+void knee2_ground(int t, int s, int e)
+{ 
+  if(s>e){
+    for(int i=s;i>e;i--)
+    {
+      servo5.write(i);
+      delay(t);
+    }
+
+  }
+  
+  else{
+      for(int i=s;i<e;i++)
+    {
+      servo5.write(i);
+      delay(t);
+    }
+  }
+
+}
+
+void foot(Servo& servo,int t, int s, int e) {
+    if(s>e){
+      for(int i=s;i>e;i--)
+      {
+        servo.write(i);
+        delay(t);
+      }
+
+    }
+    
+    else{
+        for(int i=s;i<e;i++)
+      {
+        servo.write(i);
+        delay(t);
+      }
+    }
+}
+
+void body_right(int t)
+{
+  for(int i=90;i<105;i++)
+  { 
+    servo1.write(i);
+    delay(t);
+  }
+    for(int i=90;i<110;i++)
+  { 
+    servo4.write(i);
+    delay(t);
+  }
+
+}
+
+void body_left(int t)
+{
+      for(int i=90;i>85;i--)
+  { 
+    servo4.write(i);
+    delay(t);
+  }
+
+  for(int i=90;i>80;i--)
+  { 
+    servo1.write(i);
+    delay(t);
+  }
+
+
+}
