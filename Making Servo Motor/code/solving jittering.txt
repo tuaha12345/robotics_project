@@ -1,0 +1,15 @@
+1. Adding a small delay at startup: When the system powers on, it can help to add a brief delay to stabilize the sensor readings before starting motor control.
+
+
+Copy code:
+void setup() {
+  delay(500);  // Allow the system to stabilize for half a second
+  // Rest of the setup
+}
+
+2.Power Issues and Noise:
+Possible Cause: The motor and sensor system may experience power fluctuations, especially when the motor driver (BTS) draws a high current. This can introduce electrical noise and cause incorrect sensor readings.
+Solution:
+Make sure that the power supply is stable, and the sensor has proper filtering capacitors to deal with electrical noise.
+Add decoupling capacitors (e.g., 0.1µF ceramic and 10µF electrolytic) near the AS5600 to reduce noise.
+Ensure proper grounding between the sensor, motor, and microcontroller to prevent noise interference.

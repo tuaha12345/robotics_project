@@ -1,0 +1,13 @@
+1.https://www.electronics-lab.com/project/closed-loop-analog-position-control-using-brushed-dc-motor-and-potentiometer/
+2.https://www.electronics-lab.com/project/dc-motor-position-control-using-potentiometer-arduino-compatible/
+3.https://www.youtube.com/watch?v=m6xne2mSTUo&ab_channel=CurioRes
+4.https://www.youtube.com/watch?v=BWSH7EnjaQE&ab_channel=AaedMusa
+5.https://www.youtube.com/watch?v=tD2Ki3vw704&ab_channel=HowToMechatronics
+6.https://www.instructables.com/Make-your-own-low-cost-servo/
+7.https://www.instructables.com/Wiper-Motor-and-Arduino-Mega-Servo/
+
+8.https://howtomechatronics.com/projects/how-to-turn-any-dc-motor-into-a-servo-motor/
+9.*****https://www.instructables.com/3D-Printed-Servo-Motor/
+
+10. https://www.youtube.com/watch?v=yFH8key-t_M&t=644s&ab_channel=TrashRobotics
+11.https://geekeeceebee.com/DCMotor%20Position%20Tracking.html
